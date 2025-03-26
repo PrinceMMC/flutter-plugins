@@ -33,6 +33,17 @@ abstract class WindowController {
   /// Center the window on the screen.
   Future<void> center();
 
+  /// Hide the title bar of the window
+  Future<void> hideTitleBar();
+
+  /// Makes the window ignore all mouse events.
+  ///
+  /// All mouse events happened in this window will be passed to the window below this window, but if this window has focus, it will still receive keyboard events.
+  Future<void> setIgnoreMouseEvents(bool ignore);
+
+  /// Sets the background color of the window.
+  Future<void> setBackgroundColor(Color backgroundColor);
+
   /// Set the window's title.
   Future<void> setTitle(String title);
 

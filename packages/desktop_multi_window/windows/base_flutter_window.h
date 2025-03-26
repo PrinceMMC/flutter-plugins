@@ -27,6 +27,12 @@ class BaseFlutterWindow {
 
   void Center();
 
+  void HideTitleBar();
+
+  void SetIgnoreMouseEvents(bool ignore);
+
+  void SetBackgroundColor(int64_t backgroundColorA, int64_t backgroundColorR, int64_t backgroundColorG, int64_t backgroundColorB);
+
  protected:
 
   virtual HWND GetWindowHandle() = 0;

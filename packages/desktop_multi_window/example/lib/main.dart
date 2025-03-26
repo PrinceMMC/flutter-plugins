@@ -1,3 +1,130 @@
+// #region 弹出透明背景可移动的窗体
+
+// import 'package:flutter/material.dart';
+// import 'package:desktop_multi_window/desktop_multi_window.dart';
+
+// void main(List<String> args) async {
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   if (args.isEmpty || args[0] != 'multi_window') {
+//     runApp(MyApp());
+//   } else {
+//     final windowId = int.parse(args[1]);
+//     runApp(
+//       MaterialApp(
+//         home: NewWindowApp(
+//           windowId: windowId,
+//         ), // 确保 NewWindowApp 是 MaterialApp 的子组件
+//       ),
+//     );
+//   }
+// }
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(title: Text('Main Window')),
+//         body: Center(
+//           child: ElevatedButton(
+//             onPressed: () async {
+//               await createNewWindow();
+//             },
+//             child: Text('Open New Window'),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class NewWindowApp extends StatefulWidget {
+//   final int windowId;
+
+//   const NewWindowApp({Key? key, required this.windowId}) : super(key: key);
+
+//   @override
+//   _NewWindowAppState createState() => _NewWindowAppState();
+// }
+
+// class _NewWindowAppState extends State<NewWindowApp> {
+//   late WindowController _windowController;
+//   Offset _initialPosition = Offset.zero; // 记录窗口初始位置
+//   Offset _dragStart = Offset.zero; // 记录鼠标拖动起点
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _windowController = WindowController.fromWindowId(widget.windowId);
+
+//     _initialPosition = Offset(100, 100); // 设定窗口初始位置
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       theme: ThemeData.dark().copyWith(
+//         scaffoldBackgroundColor: Colors.transparent, // 透明背景
+//       ),
+//       home: Scaffold(
+//         backgroundColor: Colors.transparent, // 关键：Scaffold 透明
+//         body: GestureDetector(
+//           onPanStart: (details) {
+//             _dragStart = details.globalPosition; // 记录拖拽起点
+//           },
+//           onPanUpdate: (details) async {
+//             try {
+//               // 计算拖动的相对位移
+//               Offset newPosition =
+//                   _initialPosition + (details.globalPosition - _dragStart);
+
+//               // 更新窗口位置（加个 Future.delayed 避免卡顿）
+//               Future.delayed(Duration.zero, () async {
+//                 await _windowController.setFrame(
+//                   Rect.fromLTWH(newPosition.dx, newPosition.dy, 400, 300),
+//                 );
+//               });
+
+//               // 更新当前存储的窗口位置
+//               _initialPosition = newPosition;
+//             } catch (e) {
+//               print('onPanUpdate 设置窗口位置失败: $e');
+//             }
+//           },
+//           child: Container(
+//             decoration: BoxDecoration(
+//               color: Colors.pink, // 半黑背景（仅控件区域）
+//               borderRadius: BorderRadius.circular(10),
+//             ),
+//             child: Center(
+//               child: Text(
+//                 '拖拽窗口\nWindow ID: ${widget.windowId}',
+//                 style: TextStyle(color: Colors.white),
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// Future<void> createNewWindow() async {
+//   final window = await DesktopMultiWindow.createWindow('new_window');
+//   await window.setTitle('New Window');
+//   await window.setFrame(Rect.fromLTWH(100, 100, 400, 300));
+//   // await window.setIgnoreMouseEvents(true);
+//   await window.setBackgroundColor(Colors.transparent);
+//   await window.hideTitleBar();
+//   await window.show();
+// } 
+
+// #endregion
+
+
+
+// #region 官方例子 主要是多窗口间通讯
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
@@ -126,3 +253,133 @@ class _ExampleSubWindow extends StatelessWidget {
     );
   }
 }
+
+// #endregion
+
+// import 'package:flutter/material.dart';
+// import 'package:desktop_lifecycle/desktop_lifecycle.dart';
+
+// void main() {
+//   runApp(MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text('Custom Popup with Desktop Lifecycle'),
+//         ),
+//         body: Center(
+//           child: PopupButton(),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+// class PopupButton extends StatefulWidget {
+//   @override
+//   _PopupButtonState createState() => _PopupButtonState();
+// }
+
+// class _PopupButtonState extends State<PopupButton> {
+//   OverlayEntry? _overlayEntry;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return ValueListenableBuilder<bool>(
+//       valueListenable: DesktopLifecycle.instance.isActive,
+//       builder: (context, isActive, child) {
+//         // 当窗口失去焦点时，关闭弹窗
+//         if (!isActive && _overlayEntry != null) {
+//           _overlayEntry!.remove();
+//           _overlayEntry = null;
+//         }
+
+//         return ElevatedButton(
+//           onPressed: () {
+//             _showCustomPopup(context);
+//           },
+//           child: Text('Show Custom Popup'),
+//         );
+//       },
+//     );
+//   }
+
+//   void _showCustomPopup(BuildContext context) {
+//     // 使用 Overlay 实现自定义弹框
+//     OverlayState overlayState = Overlay.of(context);
+//     _overlayEntry = OverlayEntry(
+//       builder: (context) {
+//         // 自定义弹框内容
+//         return Stack(
+//           children: [
+//             // 透明遮罩（可选）
+//             GestureDetector(
+//               onTap: () {
+//                 // 点击遮罩关闭弹框
+//                 _overlayEntry?.remove();
+//                 _overlayEntry = null;
+//               },
+//               child: Container(
+//                 color: Colors.transparent, // 透明遮罩
+//               ),
+//             ),
+//             // 自定义弹框位置
+//             Positioned(
+//               top: 100, // 弹框距离顶部的距离
+//               left: 100, // 弹框距离左侧的距离
+//               child: Material(
+//                 color: Colors.transparent,
+//                 child: Container(
+//                   width: 300,
+//                   height: 200,
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(10),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.black26,
+//                         blurRadius: 10,
+//                         offset: Offset(0, 5),
+//                       ),
+//                     ],
+//                   ),
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Text('This is a custom popup.'),
+//                       SizedBox(height: 20),
+//                       ElevatedButton(
+//                         onPressed: () {
+//                           _overlayEntry?.remove(); // 关闭弹框
+//                           _overlayEntry = null;
+//                         },
+//                         child: Text('Close'),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+
+//     // 将弹框添加到 Overlay
+//     overlayState.insert(_overlayEntry!);
+//   }
+
+//   @override
+//   void dispose() {
+//     _overlayEntry?.remove();
+//     super.dispose();
+//   }
+// }

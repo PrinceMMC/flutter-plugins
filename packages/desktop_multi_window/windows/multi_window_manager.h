@@ -35,6 +35,12 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void SetTitle(int64_t id, const std::string &title);
 
+  void HideTitleBar(int64_t id);
+
+  void SetIgnoreMouseEvents(int64_t id, bool ignore);
+
+  void SetBackgroundColor(int64_t id, int64_t backgroundColorA, int64_t backgroundColorR, int64_t backgroundColorG, int64_t backgroundColorB);
+
   flutter::EncodableList GetAllSubWindowIds();
 
   void OnWindowClose(int64_t id) override;

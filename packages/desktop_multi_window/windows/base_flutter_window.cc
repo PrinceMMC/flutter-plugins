@@ -101,3 +101,101 @@ void BaseFlutterWindow::Hide() {
   }
   ShowWindow(handle, SW_HIDE);
 }
+
+void BaseFlutterWindow::HideTitleBar() {
+    auto handle = GetWindowHandle();
+    if (!handle) {
+        return;
+    }
+    
+    LONG_PTR style = GetWindowLongPtr(handle, GWL_STYLE);
+    if (style == 0) {
+        return;
+    }
+
+    style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+
+    SetWindowLongPtr(handle, GWL_STYLE, style);
+
+    SetWindowPos(handle, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+}
+
+void BaseFlutterWindow::SetIgnoreMouseEvents(bool ignore) {
+    auto handle = GetWindowHandle();
+    if (!handle) {
+        return;
+    }
+    
+    LONG_PTR ex_style = GetWindowLongPtr(handle, GWL_EXSTYLE);
+    if (ignore)
+      ex_style |= WS_EX_TRANSPARENT;
+    else
+      ex_style &= ~WS_EX_TRANSPARENT;
+
+    SetWindowLongPtr(handle, GWL_EXSTYLE, ex_style);
+
+    SetWindowPos(handle, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+}
+
+void BaseFlutterWindow::SetBackgroundColor(int64_t backgroundColorA, int64_t backgroundColorR, int64_t backgroundColorG, int64_t backgroundColorB)
+{
+    auto handle = GetWindowHandle();
+    if (!handle)
+    {
+        return;
+    }
+
+    bool isTransparent = backgroundColorA == 0 && backgroundColorR == 0 &&
+                         backgroundColorG == 0 && backgroundColorB == 0;
+
+    const HINSTANCE hModule = LoadLibrary(TEXT("user32.dll"));
+    if (hModule)
+    {
+        typedef enum _ACCENT_STATE
+        {
+            ACCENT_DISABLED = 0,
+            ACCENT_ENABLE_GRADIENT = 1,
+            ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+            ACCENT_ENABLE_BLURBEHIND = 3,
+            ACCENT_ENABLE_ACRYLICBLURBEHIND = 4,
+            ACCENT_ENABLE_HOSTBACKDROP = 5,
+            ACCENT_INVALID_STATE = 6
+        } ACCENT_STATE;
+        struct ACCENTPOLICY
+        {
+            int nAccentState;
+            int nFlags;
+            int nColor; 
+            int nAnimationId;
+        };
+        struct WINCOMPATTRDATA
+        {
+            int nAttribute;
+            PVOID pData;
+            ULONG ulDataSize;
+        };
+        typedef BOOL(WINAPI * pSetWindowCompositionAttribute)(HWND,
+                                                              WINCOMPATTRDATA *);
+        const pSetWindowCompositionAttribute SetWindowCompositionAttribute =
+            (pSetWindowCompositionAttribute)GetProcAddress(
+                hModule, "SetWindowCompositionAttribute");
+        if (SetWindowCompositionAttribute)
+        {
+            int32_t accent_state = isTransparent ? ACCENT_ENABLE_TRANSPARENTGRADIENT
+                                                 : ACCENT_ENABLE_GRADIENT;
+
+           
+            int color = static_cast<int>(
+                ((backgroundColorA & 0xFF) << 24) | 
+                ((backgroundColorB & 0xFF) << 16) | 
+                ((backgroundColorG & 0xFF) << 8) |  
+                (backgroundColorR & 0xFF)           
+            );
+
+            ACCENTPOLICY policy = {accent_state, 2, color, 0};
+            WINCOMPATTRDATA data = {19, &policy, sizeof(policy)};
+            SetWindowCompositionAttribute(handle, &data);
+        }
+        FreeLibrary(hModule);
+    }
+}

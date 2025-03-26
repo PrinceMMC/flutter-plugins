@@ -38,6 +38,30 @@ class WindowControllerMainImpl extends WindowController {
   }
 
   @override
+  Future<void> hideTitleBar() {
+    return _channel.invokeMethod('hideTitleBar', _id);
+  }
+
+  @override
+  Future<void> setIgnoreMouseEvents(bool ignore) {
+    return _channel.invokeMethod('setIgnoreMouseEvents', <String, dynamic>{
+      'windowId': _id,
+      'ignore': ignore,
+    });
+  }
+
+  @override
+  Future<void> setBackgroundColor(Color backgroundColor) {
+    return _channel.invokeMethod('setBackgroundColor', <String, dynamic>{
+      'windowId': _id,
+      'backgroundColorA': (backgroundColor.a * 255).round(),
+      'backgroundColorR': (backgroundColor.r * 255).round(),
+      'backgroundColorG': (backgroundColor.g * 255).round(),
+      'backgroundColorB': (backgroundColor.b * 255).round(),
+    });
+  }
+
+  @override
   Future<void> setFrame(Rect frame) {
     return _channel.invokeMethod('setFrame', <String, dynamic>{
       'windowId': _id,

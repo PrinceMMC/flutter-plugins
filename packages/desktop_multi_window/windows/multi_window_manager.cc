@@ -129,6 +129,27 @@ void MultiWindowManager::Center(int64_t id) {
   }
 }
 
+void MultiWindowManager::HideTitleBar(int64_t id) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->HideTitleBar();
+    }
+}
+
+void MultiWindowManager::SetIgnoreMouseEvents(int64_t id, bool ignore) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->SetIgnoreMouseEvents(ignore);
+    }
+}
+
+void MultiWindowManager::SetBackgroundColor(int64_t id, int64_t backgroundColorA, int64_t backgroundColorR, int64_t backgroundColorG, int64_t backgroundColorB) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->SetBackgroundColor(backgroundColorA, backgroundColorR, backgroundColorG, backgroundColorB);
+    }
+}
+
 flutter::EncodableList MultiWindowManager::GetAllSubWindowIds() {
   flutter::EncodableList resList = flutter::EncodableList();
   for (auto &window : windows_) {
