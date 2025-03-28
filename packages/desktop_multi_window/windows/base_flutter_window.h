@@ -33,6 +33,8 @@ class BaseFlutterWindow {
 
   void SetBackgroundColor(int64_t backgroundColorA, int64_t backgroundColorR, int64_t backgroundColorG, int64_t backgroundColorB);
 
+  void SetAlwaysOnTop(bool isAlwaysOnTop);
+
  protected:
 
   virtual HWND GetWindowHandle() = 0;

@@ -58,7 +58,9 @@ class PopupWindowState extends State<PopupWindow> {
       //此处需跟随移动
       await removeWindow(dx, dy);
     } else if (call.method == "popup") {
+      _windowController.setAlwaysOnTop(false);
       showCustomPopup();
+      _windowController.setAlwaysOnTop(true);
     }
   }
 

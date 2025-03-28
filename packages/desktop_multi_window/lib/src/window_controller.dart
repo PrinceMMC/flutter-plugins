@@ -44,6 +44,9 @@ abstract class WindowController {
   /// Sets the background color of the window.
   Future<void> setBackgroundColor(Color backgroundColor);
 
+  /// Sets whether the window should show always on top of other windows.
+  Future<void> setAlwaysOnTop(bool isAlwaysOnTop);
+
   /// Set the window's title.
   Future<void> setTitle(String title);
 

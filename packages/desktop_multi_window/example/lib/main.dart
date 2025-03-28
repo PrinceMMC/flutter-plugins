@@ -169,6 +169,7 @@ Future<void> createNewWindow() async {
   final popupRect = Rect.fromLTWH(popupleft, popuptop, popupWidth, popupHeight);
   await popupWindow.setFrame(popupRect);
   await popupWindow.setBackgroundColor(Colors.transparent);
+  await popupWindow.setAlwaysOnTop(true);
   await popupWindow.hideTitleBar();
   await popupWindow.show();
 
@@ -190,6 +191,7 @@ Future<void> createNewWindow() async {
   await window.setFrame(toolBarRect);
   // await window.setIgnoreMouseEvents(true);
   await window.setBackgroundColor(Colors.transparent);
+  await window.setAlwaysOnTop(true);
   await window.hideTitleBar();
   await window.show();
 

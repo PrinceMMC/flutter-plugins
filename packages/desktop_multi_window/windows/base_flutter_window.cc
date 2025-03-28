@@ -199,3 +199,13 @@ void BaseFlutterWindow::SetBackgroundColor(int64_t backgroundColorA, int64_t bac
         FreeLibrary(hModule);
     }
 }
+
+void BaseFlutterWindow::SetAlwaysOnTop(bool isAlwaysOnTop){
+    auto handle = GetWindowHandle();
+    if (!handle)
+    {
+        return;
+    }
+    SetWindowPos(handle, isAlwaysOnTop ? HWND_TOPMOST : HWND_NOTOPMOST,
+               0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+}

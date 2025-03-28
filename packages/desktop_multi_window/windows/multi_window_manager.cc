@@ -150,6 +150,13 @@ void MultiWindowManager::SetBackgroundColor(int64_t id, int64_t backgroundColorA
     }
 }
 
+void MultiWindowManager::SetAlwaysOnTop(int64_t id, bool isAlwaysOnTop) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->SetAlwaysOnTop(isAlwaysOnTop);
+    }
+}
+
 flutter::EncodableList MultiWindowManager::GetAllSubWindowIds() {
   flutter::EncodableList resList = flutter::EncodableList();
   for (auto &window : windows_) {

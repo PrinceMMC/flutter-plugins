@@ -98,53 +98,64 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     return;
   }
   else if (method_call.method_name() == "hideTitleBar") {
-      auto window_id = method_call.arguments()->LongValue();
-      MultiWindowManager::Instance()->HideTitleBar(window_id);
-      result->Success();
-      return;
+    auto window_id = method_call.arguments()->LongValue();
+    MultiWindowManager::Instance()->HideTitleBar(window_id);
+    result->Success();
+    return;
   }
   else if (method_call.method_name() == "setIgnoreMouseEvents") {
-      auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
-      auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
-      auto ignore = std::get<bool>(arguments->at(flutter::EncodableValue("ignore")));
-      MultiWindowManager::Instance()->SetIgnoreMouseEvents(window_id, ignore);
-      result->Success();
-      return;
+    auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    auto ignore = std::get<bool>(arguments->at(flutter::EncodableValue("ignore")));
+    MultiWindowManager::Instance()->SetIgnoreMouseEvents(window_id, ignore);
+    result->Success();
+    return;
   }
   else if (method_call.method_name() == "setBackgroundColor") {
-      auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
-      auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
 
-      auto getColorValue = [&](const std::string& key) -> int64_t {
-          auto it = arguments->find(flutter::EncodableValue(key));
-          if (it == arguments->end()) throw std::runtime_error("Missing " + key);
+    auto getColorValue = [&](const std::string& key) -> int64_t {
+        auto it = arguments->find(flutter::EncodableValue(key));
+        if (it == arguments->end()) throw std::runtime_error("Missing " + key);
 
-          if (std::holds_alternative<int64_t>(it->second)) {
-              return std::get<int64_t>(it->second);  // Dart ´« int
-          }
-          else if (std::holds_alternative<double>(it->second)) {
-              return static_cast<int64_t>(std::get<double>(it->second));  // Dart ´« double
-          }
-          else if (std::holds_alternative<int>(it->second)) {
-              return static_cast<int64_t>(std::get<int>(it->second));  // Dart ´« double
-          }
-          else {
-              throw std::runtime_error("Invalid type for " + key);
-          }
-      };
+        if (std::holds_alternative<int64_t>(it->second)) {
+            return std::get<int64_t>(it->second);  // Dart ï¿½ï¿½ int
+        }
+        else if (std::holds_alternative<double>(it->second)) {
+            return static_cast<int64_t>(std::get<double>(it->second));  // Dart ï¿½ï¿½ double
+        }
+        else if (std::holds_alternative<int>(it->second)) {
+            return static_cast<int64_t>(std::get<int>(it->second));  // Dart ï¿½ï¿½ double
+        }
+        else {
+            throw std::runtime_error("Invalid type for " + key);
+        }
+    };
 
-      int64_t backgroundColorA = getColorValue("backgroundColorA");
-      int64_t backgroundColorR = getColorValue("backgroundColorR");
-      int64_t backgroundColorG = getColorValue("backgroundColorR");
-      int64_t backgroundColorB = getColorValue("backgroundColorR");
+    int64_t backgroundColorA = getColorValue("backgroundColorA");
+    int64_t backgroundColorR = getColorValue("backgroundColorR");
+    int64_t backgroundColorG = getColorValue("backgroundColorR");
+    int64_t backgroundColorB = getColorValue("backgroundColorR");
 
-      //int64_t backgroundColorA = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorA")));
-      //int64_t backgroundColorR = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorR")));
-      //int64_t backgroundColorG = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorG")));
-      //int64_t backgroundColorB = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorB")));
-      MultiWindowManager::Instance()->SetBackgroundColor(window_id, backgroundColorA, backgroundColorR, backgroundColorG, backgroundColorB);
-      result->Success();
-      return;
+    //int64_t backgroundColorA = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorA")));
+    //int64_t backgroundColorR = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorR")));
+    //int64_t backgroundColorG = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorG")));
+    //int64_t backgroundColorB = std::get<int64_t>(arguments->at(flutter::EncodableValue("backgroundColorB")));
+    MultiWindowManager::Instance()->SetBackgroundColor(window_id, backgroundColorA, backgroundColorR, backgroundColorG, backgroundColorB);
+    result->Success();
+    return;
+  }
+  else if (method_call.method_name() == "setAlwaysOnTop") {
+    auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
+
+    bool isAlwaysOnTop = std::get<bool>(arguments->at(flutter::EncodableValue("isAlwaysOnTop")));
+
+    MultiWindowManager::Instance()->SetAlwaysOnTop(window_id, isAlwaysOnTop);
+    result->Success();
+    return;
+    
   }
   result->NotImplemented();
 }

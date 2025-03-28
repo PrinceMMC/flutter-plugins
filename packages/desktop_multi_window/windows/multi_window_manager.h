@@ -41,6 +41,8 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void SetBackgroundColor(int64_t id, int64_t backgroundColorA, int64_t backgroundColorR, int64_t backgroundColorG, int64_t backgroundColorB);
 
+  void SetAlwaysOnTop(int64_t id, bool isAlwaysOnTop);
+
   flutter::EncodableList GetAllSubWindowIds();
 
   void OnWindowClose(int64_t id) override;
